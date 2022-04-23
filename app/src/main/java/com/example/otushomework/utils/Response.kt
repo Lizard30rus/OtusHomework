@@ -1,4 +1,4 @@
-package com.example.otushomework
+package com.example.otushomework.utils
 
 sealed class Response<T> {
 

@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 
 /**
- * Модель фильма для записи  данных в БД
+ * Модель фильма для записи данных в БД
  */
 @Entity
 data class FilmItemModel(
