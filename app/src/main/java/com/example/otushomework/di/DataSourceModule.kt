@@ -21,7 +21,7 @@ class DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideWebDataSource() : FilmsApi {
+    fun provideWebDataSource(): FilmsApi {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(Constants.BASE_URL)
@@ -31,16 +31,18 @@ class DataSourceModule {
 
     @Singleton
     @Provides
-    fun DbDataSource(@ApplicationContext context: Context) : FilmDatabase {
+    fun DbDataSource(@ApplicationContext context: Context): FilmDatabase {
         return Room
-            .databaseBuilder(context,
+            .databaseBuilder(
+                context,
                 FilmDatabase::class.java,
-            "film_database")
+                "film_database"
+            )
             .fallbackToDestructiveMigration()
             .build()
     }
 
     @Singleton
     @Provides
-    fun filmDao(db : FilmDatabase) : FilmDao = db.FilmDao()
+    fun filmDao(db: FilmDatabase): FilmDao = db.FilmDao()
 }

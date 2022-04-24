@@ -11,16 +11,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FilmDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addFilms(films: List<FilmItemModel>)
 
     @Query("SELECT * FROM FilmItemModel")
-    fun getFilms() : Flow<List<FilmItemModel>>
+    fun getFilms(): Flow<List<FilmItemModel>>
 
     @Query("SELECT * FROM filmitemmodel WHERE id=(:id)")
-    fun getFilm(id : Int) : Flow<FilmItemModel>
+    fun getFilm(id: Int): Flow<FilmItemModel>
 
     @Query("SELECT * FROM FilmItemModel WHERE isFavorite=(:isFavorite)")
-    fun getFavoriteFilms(isFavorite : Boolean) : Flow<List<FilmItemModel>>
+    fun getFavoriteFilms(isFavorite: Boolean): Flow<List<FilmItemModel>>
 
 }

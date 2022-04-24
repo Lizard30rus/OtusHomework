@@ -9,11 +9,11 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class FilmItemModel(
-    val imageFilm : String,
+    val imageFilm: String,
     @PrimaryKey val id: Int,
     val nameFilm: String,
-    val descriptionFilm : String,
-    var isFavorite : Boolean = false
+    val descriptionFilm: String,
+    var isFavorite: Boolean = false
 )
 
 

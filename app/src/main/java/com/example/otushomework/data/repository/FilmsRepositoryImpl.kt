@@ -1,34 +1,36 @@
 package com.example.otushomework.data.repository
 
+import android.util.Log
 import com.example.otushomework.data.models.FilmItemModel
 import com.example.otushomework.data.repository.room.FilmDao
 import com.example.otushomework.data.repository.web.FilmsApi
 import com.example.otushomework.utils.Response
 import kotlinx.coroutines.flow.Flow
-import java.lang.Exception
 import javax.inject.Inject
 
 class FilmsRepositoryImpl @Inject constructor(
-    private val webDataSource : FilmsApi,
-    private val dbDataSource : FilmDao
-) : FilmsRepository{
+    private val webDataSource: FilmsApi,
+    private val dbDataSource: FilmDao
+) : FilmsRepository {
 
     override suspend fun updateFilms() {
         try {
             val resultFromWeb = webDataSource.updateFilms()
+            Log.d("TAG", "now we in repository impl, update films, ${resultFromWeb.size}")
             val result = mutableListOf<FilmItemModel>()
             resultFromWeb.forEach { item ->
                 result.add(
                     FilmItemModel(
-                    imageFilm = item.imageFilm,
-                id = item.id,
-                nameFilm = item.nameFilm,
-                descriptionFilm = item.descriptionFilm,
-                isFavorite = false)
+                        imageFilm = item.imageFilm,
+                        id = item.id,
+                        nameFilm = item.nameFilm,
+                        descriptionFilm = item.descriptionFilm,
+                        isFavorite = false
+                    )
                 )
             }
             dbDataSource.addFilms(result)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             println(e.message)
         }
     }
@@ -37,7 +39,7 @@ class FilmsRepositoryImpl @Inject constructor(
         val result = dbDataSource.getFilms()
         return try {
             Response.Succsess(result)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Response.Error(e)
         }
     }
@@ -46,19 +48,18 @@ class FilmsRepositoryImpl @Inject constructor(
         val result = dbDataSource.getFavoriteFilms(true)
         return try {
             Response.Succsess(result)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Response.Error(e)
         }
     }
 
-    override fun getDetailsFilm(id : Int): Response<Flow<FilmItemModel>> {
+    override fun getDetailsFilm(id: Int): Response<Flow<FilmItemModel>> {
         val result = dbDataSource.getFilm(id)
         return try {
             Response.Succsess(result)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Response.Error(e)
         }
     }
-
 
 }
