@@ -98,7 +98,7 @@ fun FilmItem(
             .clickable {
                 navController.navigate("${Constants.FILM_DETAIL_SCREEN}/${film.nameFilm}")
             }) {
-       /* CoilImage(
+        CoilImage(
             request = ImageRequest.Builder(LocalContext.current)
                 .data(film.imageFilm)
                 .build(),
@@ -112,7 +112,7 @@ fun FilmItem(
                 color = MaterialTheme.colors.primary,
                 modifier = Modifier.scale(0.5f)
             )
-        }*/
+        }
         Text(
             text = film.nameFilm,
             fontSize = 20.sp,
