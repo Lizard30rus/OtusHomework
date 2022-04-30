@@ -9,22 +9,19 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.request.ImageRequest
 import com.example.otushomework.R
 import com.example.otushomework.data.models.FilmItemModel
 import com.example.otushomework.utils.Constants
-import com.google.accompanist.coil.CoilImage
+import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun FilmListScreen(
@@ -98,21 +95,23 @@ fun FilmItem(
             .clickable {
                 navController.navigate("${Constants.FILM_DETAIL_SCREEN}/${film.nameFilm}")
             }) {
-        CoilImage(
-            request = ImageRequest.Builder(LocalContext.current)
-                .data(film.imageFilm)
-                .build(),
-            contentDescription = film.nameFilm,
-            fadeIn = true,
+        GlideImage(
+            imageModel = film.imageFilm,
             modifier = Modifier
-                .size(100.dp)
-                .align(CenterVertically)
-        ) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colors.primary,
-                modifier = Modifier.scale(0.5f)
-            )
-        }
+                .height(100.dp)
+                .width(100.dp),
+            loading = {
+                CircularProgressIndicator(
+                    color = Color.Blue
+                )
+            },
+        failure =  {
+            Text(
+                text = "image request failed.",
+            modifier = Modifier
+                .height(100.dp)
+                .width(100.dp))
+        })
         Text(
             text = film.nameFilm,
             fontSize = 20.sp,
