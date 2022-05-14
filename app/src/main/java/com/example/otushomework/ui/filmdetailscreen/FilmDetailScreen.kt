@@ -1,6 +1,10 @@
 package com.example.otushomework.ui.filmdetailscreen
 
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -14,22 +18,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.example.otushomework.data.models.FilmItemModel
 import com.example.otushomework.ui.theme.Shapes
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun FilmDetailScreen(
-    id: Int,
-    viewModel: FilmDetailViewModel = hiltViewModel()
+    navHostController: NavHostController,
+    filmItemModel: FilmItemModel?
 ) {
-    val filmDetail = viewModel.getFilmDetail(id)
+    //val filmDetail = viewModel.getFilmDetail(id)
     Column(
         modifier = Modifier
-            .padding(start = 8.dp, end = 8.dp),
+            .padding(start = 8.dp, end = 8.dp)
+            .verticalScroll(ScrollState(0)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         GlideImage(
-            imageModel = filmDetail.imageFilm,
+            imageModel = filmItemModel?.imageFilm,
             modifier = Modifier
                 .clip(Shapes.small),
             contentScale = ContentScale.Fit,
@@ -48,14 +55,14 @@ fun FilmDetailScreen(
             })
         Spacer(modifier = Modifier.height(14.dp))
         Text(
-            text = filmDetail.nameFilm,
+            text = filmItemModel?.nameFilm ?: "default",
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = filmDetail.descriptionFilm,
+            text = filmItemModel?.descriptionFilm ?: "default",
             fontSize = 16.sp,
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth()

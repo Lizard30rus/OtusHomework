@@ -1,6 +1,9 @@
 package com.example.otushomework.ui.filmscreen
 
+import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,59 +17,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.otushomework.R
 import com.example.otushomework.data.models.FilmItemModel
+import com.example.otushomework.ui.theme.Red500
+import com.example.otushomework.ui.theme.Yellow800
 import com.example.otushomework.utils.Constants
+import com.example.otushomework.utils.toJson
+import com.google.gson.Gson
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun FilmListScreen(
-    navController: NavController
+    navController: NavHostController
 ) {
-    Surface(
-        color = MaterialTheme.colors.background,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            bottomBar = {
-                BottomAppBar {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.main_film_list),
-                            contentDescription = "main_film_list"
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(0.33f, true))
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painter = painterResource(R.drawable.favorite_film_list),
-                            contentDescription = "favorite_film_list"
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(0.33f, true))
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painter = painterResource(R.drawable.share),
-                            contentDescription = "share"
-                        )
-                    }
-                }
-            }) {
-            FilmList(navController = navController)
-        }
-    }
+    FilmList(navController)
 }
 
 @Composable
 fun FilmList(
-    navController: NavController,
+    navController: NavHostController,
     viewModel: FilmListViewModel = hiltViewModel()
 ) {
     val filmList by viewModel.filmList.collectAsState()
@@ -87,6 +65,7 @@ fun FilmList(
                 navController = navController,
                 modifier = Modifier
             )
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 
@@ -113,19 +92,20 @@ fun FilmItem(
     navController: NavController,
     modifier: Modifier
 ) {
+    val context = LocalContext.current
+    val json = Uri.encode(Gson().toJson(film))
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(6.dp)
             .clip(RoundedCornerShape(5.dp))
-            .clickable {
-                navController.navigate("${Constants.FILM_DETAIL_SCREEN}/${film.id}")
-            }) {
+            .background(color = Yellow800)
+    ) {
         GlideImage(
             imageModel = film.imageFilm,
             modifier = Modifier
                 .height(150.dp)
-                .width(100.dp),
+                .width(100.dp)
+                .clip(RoundedCornerShape(12.dp)),
             loading = {
                 CircularProgressIndicator(
                     color = Color.Blue
@@ -139,16 +119,38 @@ fun FilmItem(
                         .width(100.dp)
                 )
             })
-        Text(
-            text = film.nameFilm,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Button(
-            onClick = { },
-        ) {
-
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(Modifier.padding(top = 12.dp)) {
+            Text(
+                text = film.nameFilm,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Button(
+                onClick = {
+                    /*val filmString = film.toJson()*/
+                    navController.navigate("${Constants.FILM_DETAIL_SCREEN}/$json")
+                },
+            ) {
+                Text(
+                    text = "Узнать больше...",
+                    color = Color.Black
+                )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Button(
+                onClick = {
+                    Toast.makeText(context, "Фильм добавлен в избранное!", Toast.LENGTH_SHORT)
+                        .show()
+                },
+            ) {
+                Text(
+                    text = "В избранное!",
+                    color = Color.Black
+                )
+            }
         }
     }
 }
@@ -168,7 +170,7 @@ fun RetryLoading(
             modifier = Modifier.height(12.dp)
         )
         Button(
-            onClick = { onRetry }
+            onClick = { onRetry() }
         ) {
             Text(text = "Retry")
 

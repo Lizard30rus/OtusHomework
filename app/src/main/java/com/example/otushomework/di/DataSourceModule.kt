@@ -49,7 +49,6 @@ class DataSourceModule {
                 FilmDatabase::class.java,
                 "film_database"
             )
-            //.fallbackToDestructiveMigration()
             .build()
     }
 

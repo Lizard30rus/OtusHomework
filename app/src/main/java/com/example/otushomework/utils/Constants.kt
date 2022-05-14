@@ -8,6 +8,7 @@ object Constants {
 
     const val FILMS_LIST_SCREEN = "film_list_screen"
     const val FILM_DETAIL_SCREEN = "film_detail_screen"
+    const val SHARE_SCREEN = "share_screen"
     const val FAVORITE_FILMS_LIST_SCREEN = "favorite_films_list_screen"
-    const val ID_FILM_KEY = "id"
+    const val FILM_ITEM = "film_item"
 }

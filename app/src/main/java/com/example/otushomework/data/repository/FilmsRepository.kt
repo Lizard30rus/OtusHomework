@@ -1,6 +1,5 @@
 package com.example.otushomework.data.repository
 
-import com.example.otushomework.data.models.FilmItem
 import com.example.otushomework.data.models.FilmItemModel
 import com.example.otushomework.utils.Response
 import kotlinx.coroutines.flow.Flow
