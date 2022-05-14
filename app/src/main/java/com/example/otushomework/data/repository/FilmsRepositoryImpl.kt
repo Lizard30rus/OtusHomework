@@ -14,24 +14,46 @@ class FilmsRepositoryImpl @Inject constructor(
 ) : FilmsRepository {
 
     override suspend fun updateFilms() {
-        try {
-            val resultFromWeb = webDataSource.updateFilms()
-            Log.d("TAG", "now we in repository impl, update films, ${resultFromWeb.size}")
-            val result = mutableListOf<FilmItemModel>()
-            resultFromWeb.forEach { item ->
-                result.add(
-                    FilmItemModel(
-                        imageFilm = item.imageFilm,
-                        id = item.id,
-                        nameFilm = item.nameFilm,
-                        descriptionFilm = item.descriptionFilm,
-                        isFavorite = false
-                    )
+        /* try {
+             val resultFromWeb = webDataSource.updateFilms()
+             Log.d("TAG", "now we in repository impl, update films, ${resultFromWeb.size}")
+             val result = mutableListOf<FilmItemModel>()
+             resultFromWeb.forEach { item ->
+                 result.add(
+                     FilmItemModel(
+                         imageFilm = item.imageFilm,
+                         id = item.id,
+                         nameFilm = item.nameFilm,
+                         descriptionFilm = item.descriptionFilm,
+                         isFavorite = false
+                     )
+                 )
+             }
+             dbDataSource.addFilms(result)
+         } catch (e: Exception) {
+             println(e.message)
+         }*/
+    }
+
+    override suspend fun getFilmsFromWeb(limit: Int, offset: Int): Response<List<FilmItemModel>> {
+        val resultFromWeb = webDataSource.updateFilms(limit, offset)
+        val result = mutableListOf<FilmItemModel>()
+        resultFromWeb.forEach { item ->
+            result.add(
+                FilmItemModel(
+                    imageFilm = item.imageFilm,
+                    id = item.id,
+                    nameFilm = item.nameFilm,
+                    descriptionFilm = item.descriptionFilm,
+                    isFavorite = false
                 )
-            }
-            dbDataSource.addFilms(result)
+            )
+        }
+        dbDataSource.addFilms(result)
+        return try {
+            Response.Succsess(result)
         } catch (e: Exception) {
-            println(e.message)
+            Response.Error(e)
         }
     }
 
@@ -55,8 +77,10 @@ class FilmsRepositoryImpl @Inject constructor(
 
     override fun getDetailsFilm(id: Int): Response<Flow<FilmItemModel>> {
         val result = dbDataSource.getFilm(id)
+        Log.d("TAG", "now we in getDetailsFilm, id: $id")
         return try {
             Response.Succsess(result)
+
         } catch (e: Exception) {
             Response.Error(e)
         }

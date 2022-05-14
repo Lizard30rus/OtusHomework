@@ -9,6 +9,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -68,16 +70,39 @@ fun FilmList(
     viewModel: FilmListViewModel = hiltViewModel()
 ) {
     val filmList by viewModel.filmList.collectAsState()
+    val endReached by remember { viewModel.endReached }
+    val loadError by remember { viewModel.loadError }
+    val isLoading by remember { viewModel.isLoading }
     Log.d("TAG", "${filmList.size}")
     LazyColumn(
         contentPadding = PaddingValues(16.dp)
     ) {
+        val itemCount = filmList.size + 1
         items(filmList.size) {
+            if (it >= itemCount - 1 && !endReached) {
+                viewModel.loadFilmsPaginated()
+            }
             FilmItem(
                 film = filmList[it],
                 navController = navController,
                 modifier = Modifier
             )
+        }
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(color = Color.Blue)
+        }
+        if (loadError.isNotEmpty()) {
+            RetryLoading(
+                error = loadError
+            ) {
+                viewModel.loadFilmsPaginated()
+            }
         }
     }
 }
@@ -91,27 +116,29 @@ fun FilmItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
+            .padding(6.dp)
+            .clip(RoundedCornerShape(5.dp))
             .clickable {
-                navController.navigate("${Constants.FILM_DETAIL_SCREEN}/${film.nameFilm}")
+                navController.navigate("${Constants.FILM_DETAIL_SCREEN}/${film.id}")
             }) {
         GlideImage(
             imageModel = film.imageFilm,
             modifier = Modifier
-                .height(100.dp)
+                .height(150.dp)
                 .width(100.dp),
             loading = {
                 CircularProgressIndicator(
                     color = Color.Blue
                 )
             },
-        failure =  {
-            Text(
-                text = "image request failed.",
-            modifier = Modifier
-                .height(100.dp)
-                .width(100.dp))
-        })
+            failure = {
+                Text(
+                    text = "image request failed.",
+                    modifier = Modifier
+                        .height(100.dp)
+                        .width(100.dp)
+                )
+            })
         Text(
             text = film.nameFilm,
             fontSize = 20.sp,
@@ -123,5 +150,29 @@ fun FilmItem(
         ) {
 
         }
+    }
+}
+
+@Composable
+fun RetryLoading(
+    error: String,
+    onRetry: () -> Unit
+) {
+    Column {
+        Text(
+            text = error,
+            color = Color.Red,
+            fontSize = 18.sp
+        )
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
+        Button(
+            onClick = { onRetry }
+        ) {
+            Text(text = "Retry")
+
+        }
+
     }
 }

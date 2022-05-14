@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.otushomework.data.models.FilmItemModel
+import com.example.otushomework.ui.filmdetailscreen.FilmDetailScreen
 import com.example.otushomework.ui.filmscreen.FilmListScreen
 import com.example.otushomework.ui.theme.OtusHomeworkTheme
 import com.example.otushomework.utils.Constants
@@ -32,16 +34,17 @@ class MainActivity : ComponentActivity() {
 
                     }
                     composable(
-                        "${Constants.FILM_DETAIL_SCREEN}/{name_film}",
+                        "${Constants.FILM_DETAIL_SCREEN}/{id}",
                         arguments = listOf(
-                            navArgument(Constants.NAME_FILM_KEY) {
-                                type = NavType.StringType
+                            navArgument(Constants.ID_FILM_KEY) {
+                                type = NavType.IntType
                             }
                         )
                     ) {
-                        val nameFilm = remember {
-                            it.arguments?.getString(Constants.NAME_FILM_KEY)
+                        val id = remember {
+                            it.arguments?.getInt(Constants.ID_FILM_KEY)
                         }
+                        FilmDetailScreen(id = id ?: 0)
                     }
                 }
             }
