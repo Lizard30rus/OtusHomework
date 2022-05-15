@@ -18,13 +18,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -33,11 +31,12 @@ import com.example.otushomework.data.models.FilmItemModel
 import com.example.otushomework.ui.favoritefilmscreen.FavoriteFilmScreen
 import com.example.otushomework.ui.filmdetailscreen.FilmDetailScreen
 import com.example.otushomework.ui.filmscreen.FilmListScreen
+import com.example.otushomework.ui.settings.SettingsScreen
+import com.example.otushomework.ui.settings.ShareScreen
 import com.example.otushomework.ui.theme.OtusHomeworkTheme
 import com.example.otushomework.ui.theme.Red500
 import com.example.otushomework.utils.Constants
 import com.example.otushomework.utils.createNavParams
-import com.example.otushomework.utils.fromJson
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -67,11 +66,9 @@ fun OtusHomeworkScaffold(
     ) {
         NavHost(navController, startDestination = Constants.FILMS_LIST_SCREEN) {
             composable(Constants.FILMS_LIST_SCREEN) {
-                //bottomState.value = true
                 FilmListScreen(navController, topState, bottomState)
             }
             composable(Constants.FAVORITE_FILMS_LIST_SCREEN) {
-                //bottomState.value = true
                 FavoriteFilmScreen(navController, topState, bottomState)
             }
             composable(
@@ -86,6 +83,12 @@ fun OtusHomeworkScaffold(
                 bottomState.value = false
                 topState.value = true
                 FilmDetailScreen(navController, film)
+            }
+            composable(Constants.SETTINGS_SCREEN) {
+                SettingsScreen( navController, topState, bottomState)
+            }
+            composable(Constants.SHARE_SCREEN) {
+                ShareScreen( navController, topState, bottomState)
             }
         }
     }
@@ -126,7 +129,7 @@ fun OtusHomeworkBottomBar(
         BottomAppBar {
             IconButton(onClick = { navController.navigate(Constants.FILMS_LIST_SCREEN) }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.main_film_list),
+                    painter = painterResource(id = R.drawable.ic_main_film_list),
                     contentDescription = "main_film_list",
                     tint = Red500
                 )
@@ -134,15 +137,15 @@ fun OtusHomeworkBottomBar(
             Spacer(modifier = Modifier.weight(0.33f, true))
             IconButton(onClick = { navController.navigate(Constants.FAVORITE_FILMS_LIST_SCREEN) }) {
                 Icon(
-                    painter = painterResource(R.drawable.favorite_film_list),
+                    painter = painterResource(R.drawable.ic_favorite_film_list),
                     contentDescription = "favorite_film_list",
                     tint = Red500
                 )
             }
             Spacer(modifier = Modifier.weight(0.33f, true))
-            IconButton(onClick = { navController.navigate(Constants.SHARE_SCREEN) }) {
+            IconButton(onClick = { navController.navigate(Constants.SETTINGS_SCREEN) }) {
                 Icon(
-                    painter = painterResource(R.drawable.share),
+                    painter = painterResource(R.drawable.ic_settings),
                     contentDescription = "share",
                     tint = Red500
                 )
