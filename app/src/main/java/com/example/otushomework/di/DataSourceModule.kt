@@ -2,7 +2,6 @@ package com.example.otushomework.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.otushomework.BuildConfig
 import com.example.otushomework.data.repository.room.FilmDao
 import com.example.otushomework.data.repository.room.FilmDatabase
 import com.example.otushomework.data.repository.web.FilmsApi
@@ -25,17 +24,17 @@ class DataSourceModule {
     @Singleton
     @Provides
     fun provideWebDataSource(): FilmsApi {
-        val client = OkHttpClient.Builder()
+       /* val client = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor()
                 .apply {
                     if (BuildConfig.DEBUG) {
                         level = HttpLoggingInterceptor.Level.BODY
                     }
-                }).build()
+                }).build()*/
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
+            //.client(client)
             .build()
             .create(FilmsApi::class.java)
     }
@@ -47,7 +46,7 @@ class DataSourceModule {
             .databaseBuilder(
                 context,
                 FilmDatabase::class.java,
-                "film_database"
+                "film_database_with_short"
             )
             .build()
     }

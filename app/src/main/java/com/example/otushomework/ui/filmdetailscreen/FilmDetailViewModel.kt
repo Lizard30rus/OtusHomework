@@ -1,5 +1,6 @@
 package com.example.otushomework.ui.filmdetailscreen
 
+/*
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -48,4 +49,4 @@ class FilmDetailViewModel @Inject constructor(
          }
          return _filmDetail.value
     }
-}
+}*/

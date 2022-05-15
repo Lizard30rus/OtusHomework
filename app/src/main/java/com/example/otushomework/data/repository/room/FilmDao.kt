@@ -22,5 +22,4 @@ interface FilmDao {
 
     @Query("SELECT * FROM FilmItemModel WHERE isFavorite=(:isFavorite)")
     fun getFavoriteFilms(isFavorite: Boolean): Flow<List<FilmItemModel>>
-
 }

@@ -1,3 +1,4 @@
+
 package com.example.otushomework.utils
 
 import android.annotation.SuppressLint
@@ -51,5 +52,4 @@ fun loadPicture (
         })
 
     return bitmapState
-
 }

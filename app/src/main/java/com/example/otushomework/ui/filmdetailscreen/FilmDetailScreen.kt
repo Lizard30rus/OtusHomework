@@ -1,9 +1,12 @@
 package com.example.otushomework.ui.filmdetailscreen
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
@@ -12,12 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.otushomework.data.models.FilmItemModel
 import com.example.otushomework.ui.theme.Shapes
@@ -28,7 +29,6 @@ fun FilmDetailScreen(
     navHostController: NavHostController,
     filmItemModel: FilmItemModel?
 ) {
-    //val filmDetail = viewModel.getFilmDetail(id)
     Column(
         modifier = Modifier
             .padding(start = 8.dp, end = 8.dp)
@@ -39,7 +39,7 @@ fun FilmDetailScreen(
             imageModel = filmItemModel?.imageFilm,
             modifier = Modifier
                 .clip(Shapes.small),
-            contentScale = ContentScale.Fit,
+            contentScale = ContentScale.Crop,
             loading = {
                 CircularProgressIndicator(
                     color = Color.Blue
