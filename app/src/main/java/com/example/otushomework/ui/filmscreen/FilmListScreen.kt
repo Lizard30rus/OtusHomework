@@ -24,6 +24,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,12 +41,13 @@ import com.example.otushomework.ui.theme.Yellow800
 import com.example.otushomework.utils.Constants
 import com.google.gson.Gson
 import com.skydoves.landscapist.glide.GlideImage
+import kotlinx.coroutines.launch
 
 @Composable
 fun FilmListScreen(
     navController: NavHostController,
-    topState : MutableState<Boolean>,
-    bottomState : MutableState<Boolean>
+    topState: MutableState<Boolean>,
+    bottomState: MutableState<Boolean>
 ) {
     topState.value = false
     bottomState.value = true
@@ -53,15 +55,15 @@ fun FilmListScreen(
 }
 
 @Composable
-fun FilmList(
+private fun FilmList(
     navController: NavHostController,
     viewModel: FilmListViewModel = hiltViewModel()
 ) {
     val filmList by viewModel.filmList.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
-    Log.d("TAG", "${filmList.size}")
     LazyColumn(
         contentPadding = PaddingValues(16.dp)
     ) {
@@ -73,7 +75,11 @@ fun FilmList(
             FilmItem(
                 film = filmList[it],
                 navController = navController,
-                modifier = Modifier
+                modifier = Modifier,
+                add =  {
+                    coroutineScope.launch {
+                        viewModel.addToFavorites(filmList[it]) }
+                    }
             )
             Spacer(modifier = Modifier.height(12.dp))
         }
@@ -97,9 +103,10 @@ fun FilmList(
 }
 
 @Composable
-fun FilmItem(
+private fun FilmItem(
     film: FilmItemModel,
     navController: NavController,
+    add: () -> Unit,
     modifier: Modifier
 ) {
     val context = LocalContext.current
@@ -151,6 +158,7 @@ fun FilmItem(
             Spacer(modifier = Modifier.height(6.dp))
             Button(
                 onClick = {
+                    add()
                     Toast.makeText(context, "Фильм добавлен в избранное!", Toast.LENGTH_SHORT)
                         .show()
                 },
@@ -165,7 +173,7 @@ fun FilmItem(
 }
 
 @Composable
-fun RetryLoading(
+private fun RetryLoading(
     error: String,
     onRetry: () -> Unit
 ) {

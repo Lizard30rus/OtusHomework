@@ -1,8 +1,8 @@
 package com.example.otushomework.data.repository
 
-import android.util.Log
 import com.example.otushomework.data.models.FilmItemModel
-import com.example.otushomework.data.repository.room.FilmDao
+import com.example.otushomework.data.repository.room.favoritefilm.FavoriteFilmDao
+import com.example.otushomework.data.repository.room.film.FilmDao
 import com.example.otushomework.data.repository.web.FilmsApi
 import com.example.otushomework.utils.Response
 import kotlinx.coroutines.flow.Flow
@@ -10,30 +10,10 @@ import javax.inject.Inject
 
 class FilmsRepositoryImpl @Inject constructor(
     private val webDataSource: FilmsApi,
-    private val dbDataSource: FilmDao
+    private val dbDataSource: FilmDao,
+    private val favoritedbDataSource : FavoriteFilmDao
 ) : FilmsRepository {
 
-    override suspend fun updateFilms() {
-        /* try {
-             val resultFromWeb = webDataSource.updateFilms()
-             Log.d("TAG", "now we in repository impl, update films, ${resultFromWeb.size}")
-             val result = mutableListOf<FilmItemModel>()
-             resultFromWeb.forEach { item ->
-                 result.add(
-                     FilmItemModel(
-                         imageFilm = item.imageFilm,
-                         id = item.id,
-                         nameFilm = item.nameFilm,
-                         descriptionFilm = item.descriptionFilm,
-                         isFavorite = false
-                     )
-                 )
-             }
-             dbDataSource.addFilms(result)
-         } catch (e: Exception) {
-             println(e.message)
-         }*/
-    }
 
     override suspend fun getFilmsFromWeb(limit: Int, offset: Int): Response<List<FilmItemModel>> {
         val resultFromWeb = webDataSource.updateFilms(limit, offset)
@@ -51,39 +31,26 @@ class FilmsRepositoryImpl @Inject constructor(
         }
         dbDataSource.addFilms(result)
         return try {
-            Response.Succsess(result)
-        } catch (e: Exception) {
-            Response.Error(e)
-        }
-    }
-
-    override fun getFilms(): Response<Flow<List<FilmItemModel>>> {
-        val result = dbDataSource.getFilms()
-        return try {
-            Response.Succsess(result)
+            Response.Success(result)
         } catch (e: Exception) {
             Response.Error(e)
         }
     }
 
     override fun getFavoriteFilms(): Response<Flow<List<FilmItemModel>>> {
-        val result = dbDataSource.getFavoriteFilms(true)
+        val result = favoritedbDataSource.getFavoriteFilms()
         return try {
-            Response.Succsess(result)
-        } catch (e: Exception) {
+            Response.Success(result)
+        } catch (e : java.lang.Exception) {
             Response.Error(e)
         }
     }
 
-    override fun getDetailsFilm(id: Int): Response<Flow<FilmItemModel>> {
-        val result = dbDataSource.getFilm(id)
-        Log.d("TAG", "now we in getDetailsFilm, id: $id")
-        return try {
-            Response.Succsess(result)
-
-        } catch (e: Exception) {
-            Response.Error(e)
-        }
+    override suspend fun addToFavorites(filmItemModel: FilmItemModel) {
+        favoritedbDataSource.addToFavorites(filmItemModel)
     }
 
+    override suspend fun deleteFromFavorites(filmItemModel: FilmItemModel) {
+        favoritedbDataSource.deleteFromFavorites(filmItemModel)
+    }
 }

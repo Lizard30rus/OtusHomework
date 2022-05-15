@@ -1,4 +1,4 @@
-package com.example.otushomework.data.repository.room
+package com.example.otushomework.data.repository.room.film
 
 import androidx.room.Dao
 import androidx.room.Insert

@@ -6,13 +6,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface FilmsRepository {
 
-    suspend fun updateFilms()
-
+    /** Получение данных с back постранично, запись в базу данных Room */
     suspend fun getFilmsFromWeb(limit : Int, offset: Int): Response<List<FilmItemModel>>
 
-    fun getFilms(): Response<Flow<List<FilmItemModel>>>
+    /** Список фильмов из избранного */
+    fun getFavoriteFilms() : Response<Flow<List<FilmItemModel>>>
 
-    fun getFavoriteFilms(): Response<Flow<List<FilmItemModel>>>
+    /** Добавить фильм в избранное */
+    suspend fun addToFavorites(filmItemModel: FilmItemModel)
 
-    fun getDetailsFilm(id: Int): Response<Flow<FilmItemModel>>
+    /** Удалить фильм из избранного */
+    suspend fun deleteFromFavorites(filmItemModel: FilmItemModel)
 }

@@ -11,7 +11,6 @@ import com.example.otushomework.utils.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,7 +38,7 @@ class FilmListViewModel @Inject constructor(
             isLoading.value = true
             val result = filmsRepository.getFilmsFromWeb(PAGE_SIZE, curPage * Constants.PAGE_SIZE)
             when (result) {
-                is Response.Succsess -> {
+                is Response.Success -> {
                     endReached.value = curPage * PAGE_SIZE >= 20
                     curPage++
                     loadError.value = ""
@@ -52,31 +51,10 @@ class FilmListViewModel @Inject constructor(
                 }
             }
         }
-
     }
 
-    /*init {
-        viewModelScope.launch {
-          //  updateFilms()
-            val result = filmsRepository.getFilmsFromWeb()
-            when (result) {
-                is Response.Succsess -> {
-                   _filmList.value = result.data
-                }
-                is Response.Error -> {
-                    Log.e("Exception", "${result.error.message}", result.error)
-                }
-            }
-        }
+    suspend fun addToFavorites(filmItemModel: FilmItemModel) {
+        filmsRepository.addToFavorites(filmItemModel)
+    }
 
-    }*/
-
-    /*private suspend fun updateFilms() {
-        try {
-            Log.d("TAG", "now we in init viewmodel, update films!")
-            filmsRepository.updateFilms()
-        } catch (e: Exception) {
-            println("ошибка при загрузке списка фильмов: ${e.message}")
-        }
-    }*/
 }
