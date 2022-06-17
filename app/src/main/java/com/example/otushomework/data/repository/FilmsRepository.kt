@@ -9,6 +9,9 @@ interface FilmsRepository {
     /** Получение данных с back постранично, запись в базу данных Room */
     suspend fun getFilmsFromWeb(limit : Int, offset: Int): Response<List<FilmItemModel>>
 
+    /** Получение списка фильмов с базы данных */
+    suspend fun getFilmsFromRoom() : Response<Flow<List<FilmItemModel>>>
+
     /** Список фильмов из избранного */
     fun getFavoriteFilms() : Response<Flow<List<FilmItemModel>>>
 

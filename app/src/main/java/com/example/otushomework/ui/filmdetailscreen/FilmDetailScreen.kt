@@ -19,16 +19,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.example.otushomework.data.models.FilmItemModel
 import com.example.otushomework.ui.theme.Shapes
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
-fun FilmDetailScreen(
-    navHostController: NavHostController,
-    filmItemModel: FilmItemModel?
-) {
+fun FilmDetailScreen(filmItemModel: FilmItemModel?) {
     Column(
         modifier = Modifier
             .padding(start = 8.dp, end = 8.dp)

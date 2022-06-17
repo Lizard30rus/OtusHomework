@@ -11,26 +11,34 @@ import javax.inject.Inject
 class FilmsRepositoryImpl @Inject constructor(
     private val webDataSource: FilmsApi,
     private val dbDataSource: FilmDao,
-    private val favoritedbDataSource : FavoriteFilmDao
+    private val favoriteDbDataSource: FavoriteFilmDao
 ) : FilmsRepository {
 
-
     override suspend fun getFilmsFromWeb(limit: Int, offset: Int): Response<List<FilmItemModel>> {
-        val resultFromWeb = webDataSource.updateFilms(limit, offset)
-        val result = mutableListOf<FilmItemModel>()
-        resultFromWeb.forEach { item ->
-            result.add(
-                FilmItemModel(
-                    imageFilm = item.imageFilm,
-                    id = item.id,
-                    nameFilm = item.nameFilm,
-                    descriptionFilm = item.descriptionFilm,
-                    isFavorite = false
-                )
-            )
-        }
-        dbDataSource.addFilms(result)
         return try {
+            val resultFromWeb = webDataSource.updateFilms(limit, offset)
+            val result = mutableListOf<FilmItemModel>()
+            resultFromWeb.forEach { item ->
+                result.add(
+                    FilmItemModel(
+                        imageFilm = item.imageFilm,
+                        id = item.id,
+                        nameFilm = item.nameFilm,
+                        descriptionFilm = item.descriptionFilm,
+                        isFavorite = false
+                    )
+                )
+            }
+            dbDataSource.addFilms(result)
+            Response.Success(result)
+        } catch (e: Exception) {
+            Response.Error(e)
+        }
+    }
+
+    override suspend fun getFilmsFromRoom(): Response<Flow<List<FilmItemModel>>> {
+        return try {
+            val result = dbDataSource.getFilms()
             Response.Success(result)
         } catch (e: Exception) {
             Response.Error(e)
@@ -38,19 +46,19 @@ class FilmsRepositoryImpl @Inject constructor(
     }
 
     override fun getFavoriteFilms(): Response<Flow<List<FilmItemModel>>> {
-        val result = favoritedbDataSource.getFavoriteFilms()
         return try {
+            val result = favoriteDbDataSource.getFavoriteFilms()
             Response.Success(result)
-        } catch (e : java.lang.Exception) {
+        } catch (e: java.lang.Exception) {
             Response.Error(e)
         }
     }
 
     override suspend fun addToFavorites(filmItemModel: FilmItemModel) {
-        favoritedbDataSource.addToFavorites(filmItemModel)
+        favoriteDbDataSource.addToFavorites(filmItemModel)
     }
 
     override suspend fun deleteFromFavorites(filmItemModel: FilmItemModel) {
-        favoritedbDataSource.deleteFromFavorites(filmItemModel)
+        favoriteDbDataSource.deleteFromFavorites(filmItemModel)
     }
 }

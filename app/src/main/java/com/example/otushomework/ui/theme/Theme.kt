@@ -5,26 +5,24 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
     primary = Purple200,
-    primaryVariant = Yellow800,
-    secondary = Teal200,
-    secondaryVariant = Red800
+    primaryVariant = Purple700,
+    secondary = Teal200
 )
 
 private val LightColorPalette = lightColors(
-    primary = Yellow500,
-    primaryVariant = Yellow700,
-    secondary = Red500,
-    secondaryVariant = Red700
+    primary = Purple500,
+    onPrimary = Teal200,
+    primaryVariant = Purple700,
+    secondary = Teal200
 )
 
 @Composable
 fun OtusHomeworkTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
         DarkColorPalette

@@ -1,47 +1,22 @@
 package com.example.otushomework.ui.filmscreen
 
-import android.net.Uri
-import android.util.Log
-import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.example.otushomework.data.models.FilmItemModel
-import com.example.otushomework.ui.theme.Yellow800
-import com.example.otushomework.utils.Constants
-import com.google.gson.Gson
-import com.skydoves.landscapist.glide.GlideImage
-import kotlinx.coroutines.launch
+import com.example.otushomework.ui.filmscreen.views.FilmList
+import com.example.otushomework.ui.theme.Red800
 
 @Composable
 fun FilmListScreen(
@@ -49,149 +24,37 @@ fun FilmListScreen(
     topState: MutableState<Boolean>,
     bottomState: MutableState<Boolean>
 ) {
-    topState.value = false
+    topState.value = true
     bottomState.value = true
     FilmList(navController)
 }
 
 @Composable
-private fun FilmList(
-    navController: NavHostController,
-    viewModel: FilmListViewModel = hiltViewModel()
+fun RetryLoading(
+    error: MutableState<String>,
+    onRetry: () -> Unit,
+    networkError : MutableState<Boolean>
 ) {
-    val filmList by viewModel.filmList.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-    val endReached by remember { viewModel.endReached }
-    val loadError by remember { viewModel.loadError }
-    val isLoading by remember { viewModel.isLoading }
-    LazyColumn(
-        contentPadding = PaddingValues(16.dp)
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val itemCount = filmList.size + 1
-        items(filmList.size) {
-            if (it >= itemCount - 1 && !endReached) {
-                viewModel.loadFilmsPaginated()
-            }
-            FilmItem(
-                film = filmList[it],
-                navController = navController,
-                modifier = Modifier,
-                add =  {
-                    coroutineScope.launch {
-                        viewModel.addToFavorites(filmList[it]) }
-                    }
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-    }
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(color = Color.Blue)
-        }
-        if (loadError.isNotEmpty()) {
-            RetryLoading(
-                error = loadError
-            ) {
-                viewModel.loadFilmsPaginated()
-            }
-        }
-    }
-}
-
-@Composable
-private fun FilmItem(
-    film: FilmItemModel,
-    navController: NavController,
-    add: () -> Unit,
-    modifier: Modifier
-) {
-    val context = LocalContext.current
-    val json = Uri.encode(Gson().toJson(film))
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(5.dp))
-            .background(color = Yellow800)
-    ) {
-        GlideImage(
-            imageModel = film.imageFilm,
-            modifier = Modifier
-                .height(150.dp)
-                .width(100.dp)
-                .clip(RoundedCornerShape(12.dp)),
-            loading = {
-                CircularProgressIndicator(
-                    color = Color.Blue
-                )
-            },
-            failure = {
-                Text(
-                    text = "image request failed.",
-                    modifier = Modifier
-                        .height(100.dp)
-                        .width(100.dp)
-                )
-            })
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(Modifier.padding(top = 12.dp)) {
-            Text(
-                text = film.nameFilm,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Button(
-                onClick = {
-                    navController.navigate("${Constants.FILM_DETAIL_SCREEN}/$json")
-                },
-            ) {
-                Text(
-                    text = "Узнать больше...",
-                    color = Color.Black
-                )
-            }
-            Spacer(modifier = Modifier.height(6.dp))
-            Button(
-                onClick = {
-                    add()
-                    Toast.makeText(context, "Фильм добавлен в избранное!", Toast.LENGTH_SHORT)
-                        .show()
-                },
-            ) {
-                Text(
-                    text = "В избранное!",
-                    color = Color.Black
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun RetryLoading(
-    error: String,
-    onRetry: () -> Unit
-) {
-    Column {
         Text(
-            text = error,
-            color = Color.Red,
-            fontSize = 18.sp
+            text = error.value,
+            color = Red800,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center
         )
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
+        Spacer(modifier = Modifier.height(12.dp))
         Button(
-            onClick = { onRetry() }
+            onClick = {
+                error.value = ""
+                networkError.value = false
+                onRetry()
+            }
         ) {
             Text(text = "Retry")
-
         }
-
     }
 }

@@ -32,7 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.otushomework.data.models.FilmItemModel
-import com.example.otushomework.ui.theme.Yellow800
+import com.example.otushomework.ui.theme.Teal200
 import com.example.otushomework.utils.Constants
 import com.google.gson.Gson
 import com.skydoves.landscapist.glide.GlideImage
@@ -41,10 +41,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun FavoriteFilmScreen(
     navController: NavHostController,
-    topState : MutableState<Boolean>,
-    bottomState : MutableState<Boolean>
+    topState: MutableState<Boolean>,
+    bottomState: MutableState<Boolean>
 ) {
-    topState.value = false
+    topState.value = true
     bottomState.value = true
     FavoriteFilmList(navController)
 }
@@ -52,7 +52,7 @@ fun FavoriteFilmScreen(
 @Composable
 fun FavoriteFilmList(
     navController: NavHostController,
-    viewModel : FavoriteFilmListViewModel = hiltViewModel()
+    viewModel: FavoriteFilmListViewModel = hiltViewModel()
 ) {
     val favoriteFilmList by viewModel.filmList.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -63,11 +63,11 @@ fun FavoriteFilmList(
             FavoriteFilmItem(
                 film = favoriteFilmList[it],
                 navController = navController,
-                modifier = Modifier,
                 delete = {
                     coroutineScope.launch {
-                        viewModel.deleteFromFavorites(favoriteFilmList[it])}
+                        viewModel.deleteFromFavorites(favoriteFilmList[it])
                     }
+                }
             )
             Spacer(modifier = Modifier.height(12.dp))
         }
@@ -78,8 +78,7 @@ fun FavoriteFilmList(
 fun FavoriteFilmItem(
     film: FilmItemModel,
     navController: NavController,
-    delete: () -> Unit,
-    modifier: Modifier
+    delete: () -> Unit
 ) {
     val context = LocalContext.current
     val json = Uri.encode(Gson().toJson(film))
@@ -87,7 +86,7 @@ fun FavoriteFilmItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(5.dp))
-            .background(color = Yellow800)
+            .background(color = Teal200)
     ) {
         GlideImage(
             imageModel = film.imageFilm,

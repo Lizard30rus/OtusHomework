@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.otushomework.data.models.FilmItemModel
 import com.example.otushomework.data.repository.FilmsRepository
-import com.example.otushomework.utils.Constants
 import com.example.otushomework.utils.Constants.PAGE_SIZE
 import com.example.otushomework.utils.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @HiltViewModel
 class FilmListViewModel @Inject constructor(
@@ -25,9 +23,10 @@ class FilmListViewModel @Inject constructor(
 
     private var curPage = 0
 
-    var loadError = mutableStateOf("")
-    var isLoading = mutableStateOf(false)
-    var endReached = mutableStateOf(false)
+    val loadError = mutableStateOf("")
+    val isLoading = mutableStateOf(false)
+    val endReached = mutableStateOf(false)
+    val networkError = mutableStateOf(false)
 
     init {
         loadFilmsPaginated()
@@ -36,8 +35,7 @@ class FilmListViewModel @Inject constructor(
     fun loadFilmsPaginated() {
         viewModelScope.launch {
             isLoading.value = true
-            val result = filmsRepository.getFilmsFromWeb(PAGE_SIZE, curPage * Constants.PAGE_SIZE)
-            when (result) {
+            when (val result = filmsRepository.getFilmsFromWeb(PAGE_SIZE, curPage * PAGE_SIZE)) {
                 is Response.Success -> {
                     endReached.value = curPage * PAGE_SIZE >= 20
                     curPage++
@@ -46,15 +44,13 @@ class FilmListViewModel @Inject constructor(
                     _filmList.value = result.data
                 }
                 is Response.Error -> {
+                    isLoading.value = false
                     loadError.value = result.error.message.toString()
-
                 }
             }
         }
     }
-
     suspend fun addToFavorites(filmItemModel: FilmItemModel) {
         filmsRepository.addToFavorites(filmItemModel)
     }
-
 }

@@ -24,24 +24,16 @@ class DataSourceModule {
     @Singleton
     @Provides
     fun provideWebDataSource(): FilmsApi {
-       /* val client = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor()
-                .apply {
-                    if (BuildConfig.DEBUG) {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    }
-                }).build()*/
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            //.client(client)
             .build()
             .create(FilmsApi::class.java)
     }
 
     @Singleton
     @Provides
-    fun DbDataSource(@ApplicationContext context: Context): FilmDatabase {
+    fun dbDataSource(@ApplicationContext context: Context): FilmDatabase {
         return Room
             .databaseBuilder(
                 context,
@@ -53,7 +45,7 @@ class DataSourceModule {
 
     @Singleton
     @Provides
-    fun FavoriteDbDataSource(@ApplicationContext context: Context): FavoriteFilmDatabase {
+    fun favoriteDbDataSource(@ApplicationContext context: Context): FavoriteFilmDatabase {
         return Room
             .databaseBuilder(
                 context,
