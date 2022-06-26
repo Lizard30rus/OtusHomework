@@ -1,5 +1,6 @@
 package com.example.otushomework.ui.filmscreen
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,7 +27,6 @@ class FilmListViewModel @Inject constructor(
     val loadError = mutableStateOf("")
     val isLoading = mutableStateOf(false)
     val endReached = mutableStateOf(false)
-    val networkError = mutableStateOf(false)
 
     init {
         loadFilmsPaginated()
@@ -37,6 +37,7 @@ class FilmListViewModel @Inject constructor(
             isLoading.value = true
             when (val result = filmsRepository.getFilmsFromWeb(PAGE_SIZE, curPage * PAGE_SIZE)) {
                 is Response.Success -> {
+                    Log.d("TAG", "Success when network on")
                     endReached.value = curPage * PAGE_SIZE >= 20
                     curPage++
                     loadError.value = ""
@@ -44,12 +45,26 @@ class FilmListViewModel @Inject constructor(
                     _filmList.value = result.data
                 }
                 is Response.Error -> {
-                    isLoading.value = false
+                    Log.d("TAG", "Error when network on")
                     loadError.value = result.error.message.toString()
+                    when (val response = filmsRepository.getFilmsFromRoom()) {
+                        is Response.Success -> {
+                            Log.d("TAG", "success when network off")
+                            response.data.collect {
+                                _filmList.value = it
+                            }
+                        }
+                        is Response.Error -> {
+                            Log.d("TAG", "Error when network off")
+                            loadError.value = result.error.message.toString()
+                        }
+                    }
+                    isLoading.value = false
                 }
             }
         }
     }
+
     suspend fun addToFavorites(filmItemModel: FilmItemModel) {
         filmsRepository.addToFavorites(filmItemModel)
     }

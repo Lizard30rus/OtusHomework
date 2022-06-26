@@ -31,16 +31,12 @@ import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun FilmItem(
-    isLoading: Boolean,
     film: FilmItemModel,
     navController: NavController,
     add: () -> Unit
 ) {
     val context = LocalContext.current
     val json = Uri.encode(Gson().toJson(film))
-    if (isLoading) {
-        CircularProgressIndicator(color = Color.Blue)
-    } else {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -101,4 +97,3 @@ fun FilmItem(
             }
         }
     }
-}

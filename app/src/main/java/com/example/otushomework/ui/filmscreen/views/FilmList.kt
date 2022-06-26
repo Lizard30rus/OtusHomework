@@ -32,39 +32,21 @@ fun FilmList(
     LazyColumn(
         contentPadding = PaddingValues(16.dp)
     ) {
-        if (!viewModel.networkError.value) {
-            Log.d("TAG", "network on")
-            val itemCount = filmList.size + 1
-            items(filmList.size) {
-                if (it >= itemCount - 1 && !viewModel.endReached.value) {
-                    viewModel.loadFilmsPaginated()
+        val itemCount = filmList.size + 1
+        items(filmList.size) {
+            if (it >= itemCount - 1 && !viewModel.endReached.value) {
+                viewModel.loadFilmsPaginated()
+            }
+            FilmItem(
+                film = filmList[it],
+                navController = navController,
+                add = {
+                    coroutineScope.launch {
+                        viewModel.addToFavorites(filmList[it])
+                    }
                 }
-                FilmItem(
-                    isLoading = viewModel.isLoading.value,
-                    film = filmList[it],
-                    navController = navController,
-                    add = {
-                        coroutineScope.launch {
-                            viewModel.addToFavorites(filmList[it])
-                        }
-                    }
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-        } else {
-            Log.d("TAG", "network off")
-            items(filmList.size) {
-                FilmItem(
-                    isLoading = viewModel.isLoading.value,
-                    film = filmList[it],
-                    navController = navController,
-                    add = {
-                        coroutineScope.launch {
-                            viewModel.addToFavorites(filmList[it])
-                        }
-                    }
-                )
-            }
+            )
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
     Box(
@@ -75,11 +57,10 @@ fun FilmList(
             CircularProgressIndicator(color = Color.Blue)
         }
         if (viewModel.loadError.value.isNotEmpty()) {
-            viewModel.networkError.value = true
+            Log.d("TAG", "viewModel.loadError.value.isNotEmpty()")
             RetryLoading(
                 error = viewModel.loadError,
-                onRetry = viewModel::loadFilmsPaginated,
-                networkError = viewModel.networkError
+                onRetry = viewModel::loadFilmsPaginated
             )
         }
     }
